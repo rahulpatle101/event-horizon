@@ -1,0 +1,597 @@
+/* ARDENT — Through the Red Window (Day 002, V2)
+   1975 NASA graphics manual for a dark screen: strict grid, Swiss type,
+   oxide as the only warm colour. Two weights only (400 / 600). No italics. */
+
+:root {
+  --void: #07070a;
+  --oxide: #c1440e;
+  --oxide-ink: #b03e0c; /* oxide darkened slightly so Bone text passes AA on buttons */
+  --dust: #e8b48a;
+  --bone: #f2ede4;
+  --ash: #8a857d;
+  --rule: rgb(242 237 228 / 0.16);
+
+  --sans: "Inter Tight Variable", "Inter Tight", "Helvetica Neue", Arial, sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+
+  --cols: 12;
+  --gutter: clamp(1rem, 1.6vw, 1.5rem);
+  --pad-x: clamp(1.25rem, 3.4vw, 3.5rem);
+  --pad-y: clamp(1.25rem, 3.2vh, 2.25rem);
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  background: var(--void);
+  color: var(--bone);
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: var(--sans);
+  font-size: 1.0625rem;
+  font-weight: 400;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+:focus-visible {
+  outline: 2px solid var(--dust);
+  outline-offset: 3px;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+.skip-link {
+  position: absolute;
+  z-index: 10;
+  left: var(--pad-x);
+  top: 0.75rem;
+  padding: 0.6rem 0.9rem;
+  background: var(--bone);
+  color: var(--void);
+  font-weight: 600;
+  transform: translateY(-200%);
+}
+.skip-link:focus {
+  transform: none;
+}
+
+/* Shared mono voice: 11–12px, uppercase, +8% tracking */
+.eyebrow,
+.hud,
+.countdown__label,
+.countdown__clock,
+.send__label,
+.send__hint,
+.footer {
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  font-weight: 400;
+  line-height: 1.4;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ash);
+}
+
+/* ------------------------------------------------------------- hero */
+
+.hero {
+  position: relative;
+  min-height: 100svh;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+/* Poster scene (no-GPU). Geometry mirrors layout.ts. */
+.scene {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+}
+.scene__stars {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+.scene__planet {
+  /* Disc radius r = 60svh; the SVG box adds a 10% margin for the dust glow (2.2r square). */
+  position: absolute;
+  width: 132svh;
+  height: 132svh;
+  left: calc(72vw - 66svh);
+  top: 46svh;
+}
+.scene__arc {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100svh;
+  overflow: visible;
+}
+.scene__arc path {
+  fill: none;
+  stroke: var(--dust);
+  stroke-width: 1.4;
+  stroke-linecap: round;
+  stroke-dasharray: 0.5 7;
+  opacity: 0.55;
+}
+
+/* GPU particle layer: fades in over the poster; the poster's static stars hand over to it. */
+.scene__canvas {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100svh;
+  opacity: 0;
+  transition: opacity 1.2s ease;
+}
+.is-live .scene__canvas {
+  opacity: 1;
+}
+.scene__stars {
+  transition: opacity 1.2s ease;
+}
+.is-live .scene__stars {
+  opacity: 0;
+}
+
+.hero__grid {
+  position: relative;
+  min-height: 100svh;
+  display: grid;
+  grid-template-columns: repeat(var(--cols), minmax(0, 1fr));
+  grid-template-rows: auto 1fr auto;
+  column-gap: var(--gutter);
+  padding: var(--pad-y) var(--pad-x);
+}
+
+.eyebrow {
+  grid-column: 1 / 8;
+  grid-row: 1;
+  margin: 0;
+  color: var(--bone);
+}
+.eyebrow span {
+  color: var(--ash);
+  margin: 0 0.4em;
+}
+
+.hud {
+  margin: 0;
+}
+.hud--tr {
+  grid-column: 8 / -1;
+  grid-row: 1;
+  justify-self: end;
+}
+.hud--bl {
+  grid-column: 1 / 6;
+  grid-row: 3;
+  align-self: end;
+}
+.hud--br {
+  grid-column: 8 / -1;
+  grid-row: 3;
+  align-self: end;
+  justify-self: end;
+  color: var(--bone);
+}
+
+.hero__copy {
+  grid-column: 1 / 8;
+  grid-row: 2;
+  align-self: start;
+  padding-top: clamp(2.5rem, 11vh, 7.5rem);
+  outline: none;
+}
+
+.headline {
+  margin: 0;
+  font-weight: 600;
+  font-size: clamp(3rem, min(6.6vw, 12vh), 7.5rem);
+  line-height: 0.92;
+  letter-spacing: 0.035em;
+  text-transform: uppercase;
+}
+.headline span {
+  display: block;
+}
+
+.subline {
+  max-width: 30rem;
+  margin: 1.75rem 0 0;
+  font-size: 1.1875rem;
+  line-height: 1.5;
+  color: var(--bone);
+  opacity: 0.86;
+}
+
+/* --------------------------------------------------------- countdown */
+
+.countdown {
+  grid-column: 10 / -1;
+  grid-row: 2;
+  align-self: start;
+  justify-self: end;
+  padding-top: clamp(2.5rem, 11vh, 7.5rem);
+  text-align: right;
+}
+.countdown p {
+  margin: 0;
+}
+.countdown__label {
+  padding-bottom: 0.65rem;
+  border-bottom: 1px solid var(--rule);
+}
+.countdown__days {
+  margin-top: 0.75rem !important;
+  font-weight: 600;
+  font-size: clamp(2.5rem, min(4.2vw, 8vh), 4.75rem);
+  line-height: 0.95;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  font-variant-numeric: tabular-nums;
+}
+.countdown__clock {
+  margin-top: 0.6rem !important;
+  color: var(--dust);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ------------------------------------------------------------- send */
+
+.send {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem 2rem;
+  margin-top: 2.5rem;
+}
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 3.5rem;
+  padding: 0 1.75rem;
+  border: 1px solid transparent;
+  border-radius: 0;
+  font: 600 1.1875rem/1 var(--sans);
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  transition: background-color 0.2s, border-color 0.2s, color 0.2s;
+}
+.button[hidden] {
+  display: none;
+}
+.button--primary {
+  background: var(--oxide-ink);
+  color: var(--bone);
+}
+.button--primary:hover {
+  background: #9a360a;
+}
+.button--primary:disabled {
+  background: rgb(176 62 12 / 0.35);
+  color: rgb(242 237 228 / 0.55);
+  cursor: not-allowed;
+}
+.button--quiet {
+  background: none;
+  color: var(--bone);
+  border-color: var(--rule);
+}
+.button--quiet:hover {
+  border-color: var(--ash);
+}
+
+.link {
+  color: var(--bone);
+  font-size: 1.0625rem;
+  text-decoration: underline;
+  text-decoration-color: var(--rule);
+  text-underline-offset: 0.3em;
+  transition: text-decoration-color 0.2s;
+}
+.link:hover {
+  text-decoration-color: currentColor;
+}
+
+.send__form {
+  flex: 0 0 100%; /* the brief link drops to its own line while the field is open */
+}
+.send__form[hidden],
+.send__done[hidden] {
+  display: none;
+}
+.send__label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: var(--bone);
+}
+.send__row {
+  display: flex;
+  max-width: 36rem;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+.send__input {
+  flex: 1 1 14rem;
+  min-width: 0;
+  min-height: 3.5rem;
+  padding: 0 1rem;
+  border: 1px solid var(--ash);
+  border-radius: 0;
+  background: rgb(7 7 10 / 0.7);
+  color: var(--bone);
+  font: 600 1.1875rem/1 var(--sans);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.send__input:focus {
+  border-color: var(--bone);
+}
+.send__hint {
+  margin: 0.5rem 0 0;
+}
+.send__done {
+  flex: 1 1 100%;
+  margin: 0;
+  font-weight: 600;
+  font-size: 1.1875rem;
+  color: var(--dust);
+}
+
+/* ------------------------------------------------------------ brief */
+
+.brief {
+  position: relative;
+  border-top: 1px solid var(--rule);
+  outline: none;
+}
+.brief__grid {
+  display: grid;
+  grid-template-columns: repeat(var(--cols), minmax(0, 1fr));
+  column-gap: var(--gutter);
+  padding: clamp(4rem, 12vh, 8rem) var(--pad-x) clamp(3rem, 8vh, 5rem);
+}
+.brief .eyebrow {
+  grid-column: 1 / -1;
+  margin-bottom: 1.5rem;
+}
+.brief__title {
+  grid-column: 1 / 8;
+  margin: 0;
+  font-weight: 600;
+  font-size: clamp(2rem, 3.6vw, 3.25rem);
+  line-height: 1;
+  text-wrap: balance;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+.brief__lede {
+  grid-column: 1 / 7;
+  margin: 1.5rem 0 0;
+  font-size: 1.1875rem;
+  opacity: 0.86;
+}
+.brief__facts {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--gutter);
+  margin: 3.5rem 0 0;
+}
+.brief__facts div {
+  padding-top: 0.85rem;
+  border-top: 1px solid var(--rule);
+}
+.brief__facts dt {
+  font: 400 0.75rem/1.4 var(--mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ash);
+}
+.brief__facts dd {
+  margin: 0.5rem 0 0;
+  font-weight: 600;
+  font-size: 1.25rem;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
+.footer {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 0.5rem 2rem;
+  padding: 1.25rem var(--pad-x) 1.75rem;
+  border-top: 1px solid var(--rule);
+}
+.footer p {
+  margin: 0;
+}
+.footer p:first-child {
+  color: var(--bone);
+}
+
+/* ----------------------------------------------------------- mobile */
+
+@media (max-width: 767px) {
+  .scene__planet {
+    left: calc(62vw - 66svh);
+    top: 54svh;
+  }
+  .hero__grid {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto auto auto 1fr;
+    row-gap: 0;
+  }
+  .eyebrow {
+    grid-column: 1;
+    grid-row: 1;
+  }
+  /* HUD reduces to the countdown on phones. */
+  .hud {
+    display: none;
+  }
+  .hero__copy {
+    grid-column: 1;
+    grid-row: 2;
+    padding-top: 2.25rem;
+  }
+  .headline {
+    font-size: clamp(2.5rem, 12.5vw, 3.5rem);
+  }
+  .subline {
+    margin-top: 1.25rem;
+    font-size: 1.0625rem;
+  }
+  .countdown {
+    grid-column: 1;
+    grid-row: 3;
+    justify-self: start;
+    text-align: left;
+    padding-top: 1.75rem;
+    display: grid;
+    grid-template-columns: auto auto;
+    align-items: baseline;
+    column-gap: 1rem;
+  }
+  .countdown__label {
+    grid-column: 1 / -1;
+  }
+  .countdown__days {
+    font-size: 2.25rem;
+  }
+  .send {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1rem;
+    margin-top: 1.75rem;
+  }
+  .send .button--primary[data-send-open] {
+    width: 100%;
+  }
+  .link {
+    align-self: flex-start;
+  }
+  .brief__title,
+  .brief__lede {
+    grid-column: 1 / -1;
+  }
+  .brief__facts {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    row-gap: 1.5rem;
+  }
+}
+
+@media (min-width: 768px) and (max-height: 700px) {
+  .hero__copy,
+  .countdown {
+    padding-top: 1.5rem;
+  }
+}
+
+/* ----------------------------------------------------------- motion */
+
+html {
+  scroll-behavior: smooth;
+}
+.reduce-motion,
+.reduce-motion * {
+  scroll-behavior: auto !important;
+  transition-duration: 0.01ms !important;
+  animation-duration: 0.01ms !important;
+}
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  * {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}
+
+/* ------------------------------------------------------------ ?tune */
+
+.tune {
+  position: fixed;
+  z-index: 20;
+  right: 1rem;
+  bottom: 1rem;
+  width: 18rem;
+  max-height: calc(100svh - 2rem);
+  overflow-y: auto;
+  padding: 0.9rem 1rem 1rem;
+  background: rgb(7 7 10 / 0.92);
+  border: 1px solid var(--rule);
+  font: 400 0.75rem/1.3 var(--mono);
+  letter-spacing: 0.04em;
+  color: var(--bone);
+}
+.tune__title {
+  margin: 0 0 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--dust);
+}
+.tune__row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 0.25rem 0.5rem;
+  margin-bottom: 0.65rem;
+  color: var(--ash);
+}
+.tune__row output {
+  color: var(--bone);
+  font-variant-numeric: tabular-nums;
+}
+.tune__row input {
+  grid-column: 1 / -1;
+  width: 100%;
+  accent-color: var(--oxide);
+}
+.tune__buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-top: 0.75rem;
+}
+.tune__buttons button {
+  flex: 1 1 auto;
+  min-height: 2rem;
+  padding: 0 0.6rem;
+  border: 1px solid var(--rule);
+  background: none;
+  color: var(--bone);
+  font: inherit;
+  cursor: pointer;
+}
+.tune__buttons button:hover {
+  border-color: var(--ash);
+}

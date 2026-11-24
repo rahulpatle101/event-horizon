@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="dark" />
+    <title>Day 002 · NASA mission hero · three variants</title>
+    <meta name="description" content="Three fictional NASA mission hero variants rendered with vgpu and WebGPU: EVENT HORIZON, ARDENT and DOCK. Day 2 of 100 Days of Digital Craft." />
+    <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+    <style>
+      :root { color-scheme: dark; --bg: #050608; --ink: #ece8df; --mid: #9a9ea6; --rule: rgb(236 232 223 / 0.14); }
+      * { box-sizing: border-box; }
+      body { margin: 0; background: var(--bg); color: var(--ink); font: 400 17px/1.55 ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; }
+      main { max-width: 1240px; margin: 0 auto; padding: clamp(32px, 6vw, 88px) clamp(20px, 4vw, 48px) 48px; }
+      .eyebrow, .meta, footer { font: 500 12px/1.4 ui-monospace, "SF Mono", Menlo, monospace; letter-spacing: 0.1em; text-transform: uppercase; color: var(--mid); }
+      h1 { margin: 16px 0 12px; font: 400 clamp(40px, 6vw, 76px)/0.98 "Iowan Old Style", "Palatino", Georgia, serif; letter-spacing: -0.01em; }
+      .lede { max-width: 58ch; margin: 0 0 48px; color: var(--mid); }
+      ol { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 28px; }
+      a.variant { display: block; color: inherit; text-decoration: none; }
+      a.variant img { display: block; width: 100%; aspect-ratio: 16 / 10; object-fit: cover; border: 1px solid var(--rule); border-radius: 6px; transition: border-color 0.2s, transform 0.3s cubic-bezier(0.2, 0, 0, 1); }
+      a.variant:hover img { border-color: var(--ink); transform: translateY(-2px); }
+      a.variant:focus-visible { outline: 2px solid #f3ebd3; outline-offset: 6px; border-radius: 6px; }
+      h2 { margin: 16px 0 6px; font: 600 20px/1.2 ui-sans-serif, system-ui, sans-serif; }
+      h2 span { color: var(--mid); font-weight: 400; }
+      p.blurb { margin: 0 0 10px; color: var(--mid); font-size: 16px; }
+      footer { max-width: 1240px; margin: 0 auto; padding: 24px clamp(20px, 4vw, 48px) 40px; border-top: 1px solid var(--rule); display: flex; flex-wrap: wrap; gap: 8px 24px; justify-content: space-between; }
+      footer a { color: var(--ink); }
+      @media (max-width: 900px) { ol { grid-template-columns: 1fr; } }
+    </style>
+  </head>
+  <body>
+    <main>
+      <p class="eyebrow">Day 002 / 100 Days of Digital Craft</p>
+      <h1>One mission hero, three directions</h1>
+      <p class="lede">
+        Three fictional NASA mission landing-page heroes, each built around a real-time
+        <a href="https://github.com/vercel-labs/vgpu" style="color: inherit">vgpu</a> / WebGPU render with a static
+        fallback. Use a WebGPU browser (recent Chrome or Edge) for the live versions.
+      </p>
+      <ol>
+        <li>
+          <a class="variant" href="./v1/">
+            <img src="variants/v1.jpg" alt="EVENT HORIZON: a lensed silver black hole beside the headline 'We came to see what lies beyond.'" />
+            <h2>V1 · Event Horizon <span>/v1/</span></h2>
+            <p class="blurb">An observation deck aboard the vessel Horizon. Observe, scan and record a black hole, with passing debris, a relay probe and opt-in sound.</p>
+            <p class="meta">Living observation deck</p>
+          </a>
+        </li>
+        <li>
+          <a class="variant" href="./v2/">
+            <img src="variants/v2.jpg" alt="ARDENT: stars forming a mission patch above a cropped Mars, with the headline 'The next red window'." />
+            <h2>V2 · Ardent <span>/v2/</span></h2>
+            <p class="blurb">A crewed-cargo Mars mission organised around the launch window. Stardust forms the mission patch.</p>
+            <p class="meta">In progress: particles done; Mars, intro and send-your-name next</p>
+          </a>
+        </li>
+        <li>
+          <a class="variant" href="./v3/">
+            <img src="variants/v3.jpg" alt="DOCK: a hairline ring-station instrument with a color-blocked console, reading 'Tessaly Ring · Online'." />
+            <h2>V3 · Dock <span>/v3/</span></h2>
+            <p class="blurb">Thread the needle: drag the ring station into alignment, hold, and the station (and the page) comes online.</p>
+            <p class="meta">Complete motion pass</p>
+          </a>
+        </li>
+      </ol>
+    </main>
+    <footer>
+      <span>Fictional mission concepts. Not affiliated with NASA.</span>
+      <a href="licenses.txt">Credits &amp; licenses</a>
+    </footer>
+  </body>
+</html>

@@ -1,0 +1,664 @@
+/* V3 — DOCK · Tessaly Ring. Layers back→front: VOID · INSTRUMENT · CONSOLE · WARMTH.
+   Tokens only (tokens.css). Hairlines are strokes in --line-*; console colours are filled blocks. */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  background: var(--void-0);
+  color: var(--line-hi);
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  font: 400 16px/1.5 var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+:focus-visible {
+  outline: 2px solid var(--w-cream);
+  outline-offset: 2px;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+.skip-link {
+  position: absolute;
+  z-index: 10;
+  left: 24px;
+  top: 16px;
+  padding: 8px 16px;
+  border-radius: 20px;
+  background: var(--c-amber);
+  color: var(--void-0);
+  font: 600 15px/24px var(--font-display);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  transform: translateY(-200%);
+}
+.skip-link:focus {
+  transform: none;
+}
+
+/* Data / label voice: JetBrains Mono, uppercase, 10–12px, +0.08em */
+.label,
+.readout__code,
+.caption,
+.footer {
+  margin: 0;
+  font: 500 11px/1.4 var(--font-mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--line-mid);
+}
+.label .code {
+  color: var(--line-hi);
+}
+.label--quiet {
+  color: var(--line-mid);
+}
+
+/* ------------------------------------------------------------- hero */
+
+.hero {
+  --cy: 47svh; /* station centre */
+  --stage: min(68svh, 54vw);
+  position: relative;
+  min-height: 100svh;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.stars {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -2;
+}
+
+/* Crosshair registration lines through the station centre to the viewport edges */
+.crosshair span {
+  position: absolute;
+  z-index: -1;
+  background: var(--line-lo);
+}
+.crosshair__h {
+  left: 0;
+  right: 0;
+  top: var(--cy);
+  height: 1px;
+}
+.crosshair__v {
+  top: 0;
+  height: var(--v-line, 100svh);
+  left: 50%;
+  width: 1px;
+}
+
+.stage {
+  position: absolute;
+  left: 50%;
+  top: var(--cy);
+  width: var(--stage);
+  aspect-ratio: 1;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  /* Only the ring area takes drags; vertical swipes still scroll the page (brief §5.3). */
+  touch-action: pan-y;
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cg fill='none' stroke-linecap='round'%3E%3Cpath d='M7 19 A10 10 0 1 1 13 25' stroke='%23050608' stroke-width='4'/%3E%3Cpath d='M7 19 A10 10 0 1 1 13 25' stroke='%23ECE8DF' stroke-width='1.5'/%3E%3Cpath d='M13 25 L8 26.5 M13 25 L11.5 20' stroke='%23050608' stroke-width='4'/%3E%3Cpath d='M13 25 L8 26.5 M13 25 L11.5 20' stroke='%23ECE8DF' stroke-width='1.5'/%3E%3Ccircle cx='16' cy='16' r='1.5' fill='%23ECE8DF'/%3E%3C/g%3E%3C/svg%3E")
+      16 16,
+    grab;
+}
+.stage:focus-visible {
+  outline-offset: 6px;
+}
+
+.station {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+/* :not(defs *) keeps the grid mask's white rect filled (it would otherwise hide the grid). */
+.station :is(line, circle, rect, path, polyline):not(defs *) {
+  fill: none;
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+.station .hi {
+  stroke: var(--line-hi);
+}
+.station .mid {
+  stroke: var(--line-mid);
+}
+.station .lo {
+  stroke: var(--line-lo);
+}
+.station .grid polyline {
+  stroke: var(--line-lo);
+  opacity: 0.5;
+}
+.station .dot {
+  fill: var(--line-hi);
+  stroke: none;
+}
+.station .index {
+  fill: var(--line-hi);
+  stroke: none;
+}
+.station text {
+  font-family: var(--font-mono);
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  stroke: none;
+}
+.station .bezel__labels text,
+.station .port__label {
+  font-size: var(--svg-9, 10px);
+  fill: var(--line-mid);
+}
+.station .port__light {
+  stroke: var(--line-hi);
+}
+.station .port__light.is-on {
+  fill: var(--w-cream);
+  stroke: var(--w-cream);
+  filter: drop-shadow(0 0 6px var(--w-cream));
+}
+.station.is-locked .index {
+  fill: var(--w-cream);
+}
+.station .arrow__arc,
+.station .arrow__head {
+  stroke: var(--line-hi);
+  stroke-width: 1.5;
+  stroke-linecap: round;
+}
+.station .afford__leader {
+  stroke: var(--line-mid);
+}
+.station .afford__text {
+  font-size: var(--svg-11, 11px);
+  fill: var(--line-hi);
+}
+
+.caption {
+  position: absolute;
+  padding: 2px 8px;
+  background: var(--void-0); /* breaks the registration line behind it */
+  left: 50%;
+  top: calc(var(--cy) + var(--stage) / 2 + 16px);
+  transform: translateX(-50%);
+  white-space: nowrap;
+  text-align: center;
+}
+
+.topbar {
+  position: absolute;
+  top: 24px;
+  left: 32px;
+  right: 32px;
+  display: flex;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+/* --------------------------------------------------------- handoff */
+
+.handoff {
+  position: absolute;
+  left: clamp(24px, 4vw, 64px);
+  top: clamp(80px, 12svh, 120px);
+  width: min(30vw, 440px);
+  outline: none;
+}
+.headline {
+  margin: 0;
+  font: 700 clamp(40px, 4.6vw, 72px) / 0.95 var(--font-display);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--line-hi);
+}
+.nowrap {
+  white-space: nowrap;
+}
+.subline {
+  margin: 16px 0 0;
+  max-width: 30ch;
+  font: 400 16px/1.5 var(--font-body);
+  color: var(--line-mid);
+}
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 24px;
+}
+
+/* Pill buttons (§7.2): filled console colour, dark uppercase label, fully rounded */
+.pill {
+  display: inline-flex;
+  align-items: center;
+  height: 40px;
+  padding: 0 20px;
+  border: 0;
+  border-radius: 20px;
+  font: 600 15px/1 var(--font-display);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: var(--void-0);
+  cursor: pointer;
+  transition:
+    background-color var(--t-fast) var(--ease-system),
+    box-shadow var(--t-fast) var(--ease-system),
+    transform var(--t-fast) var(--ease-system);
+}
+.pill--amber {
+  background: var(--c-amber);
+}
+.pill--periwink {
+  background: var(--c-periwink);
+}
+.pill:hover {
+  box-shadow: inset 0 0 0 2px var(--w-cream);
+}
+.pill:active {
+  transform: translateY(1px);
+  filter: brightness(0.92);
+}
+
+/* Before ONLINE the handoff copy is not shown; the h1 stays available to screen readers. */
+[data-state="standby"] .headline {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+[data-state="standby"] .subline,
+[data-state="standby"] .actions {
+  display: none;
+}
+[data-state="online"] .station .arrow,
+[data-state="online"] .station .afford {
+  display: none;
+}
+
+/* ---------------------------------------------------------- console */
+
+.console {
+  position: absolute;
+  left: 16px;
+  bottom: 16px;
+  width: min(64vw, 940px);
+  height: clamp(220px, 34svh, 320px);
+  pointer-events: none;
+}
+.console__frame {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+.frame__seg--apricot {
+  fill: var(--c-apricot);
+}
+.frame__seg--periwink,
+.frame__seg--online {
+  fill: var(--c-periwink);
+}
+.frame__seg--track {
+  fill: var(--void-2);
+}
+.frame__seg--track.frame__seg--online {
+  fill: var(--c-periwink);
+}
+.frame__hold {
+  fill: var(--c-amber);
+}
+.frame__hold.is-hidden {
+  display: none;
+}
+.frame__label {
+  font: 500 10px var(--font-mono);
+  letter-spacing: 0.08em;
+  fill: var(--void-0);
+}
+.frame__label--on-track {
+  fill: var(--line-mid);
+}
+
+.console__readouts {
+  position: absolute;
+  left: 136px;
+  bottom: 56px;
+  display: flex;
+  align-items: flex-end;
+  gap: 32px;
+}
+.readout p {
+  margin: 0;
+}
+.readout__value {
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--line-lo);
+  font: 600 24px/1 var(--font-display);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--c-amber);
+  font-variant-numeric: tabular-nums;
+}
+.readout--status .readout__value {
+  font-size: 40px;
+  min-width: 4.2em;
+}
+.readout__unit {
+  margin-left: 4px;
+  font: 500 0.4em/1 var(--font-mono);
+  letter-spacing: 0.08em;
+  vertical-align: baseline;
+}
+.readout__code {
+  margin-bottom: 6px !important;
+}
+
+/* ============================================================ motion (§8) */
+
+/* Signature layers inside the stage, under the station's lines */
+.warp,
+.nebula {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+.gpu-warp.has-warp .station .grid {
+  opacity: 0; /* the GPU draws (and bends) the grid from lock onward */
+}
+.nebula {
+  /* Fallback nebula: ion/plasma, only inside the warp's well; the GPU path hides it. */
+  opacity: 0;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 42% 40%, var(--n-ion), transparent 34%),
+    radial-gradient(circle at 60% 58%, var(--n-plasma), transparent 30%);
+  mask-image: radial-gradient(circle, #000 0 22%, transparent 46%);
+  filter: blur(18px) saturate(0.85);
+  mix-blend-mode: screen;
+}
+.gpu-warp .nebula {
+  display: none;
+}
+
+/* Beat 1: stars + crosshair fade in */
+.is-booting .stars,
+.is-booting .crosshair {
+  animation: fade-in var(--t-slow) var(--ease-system) both;
+}
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+/* Beat 2: labels, index, port appear once the lines have drawn */
+.station .fade-in {
+  opacity: 0;
+  transition: opacity var(--t-base) var(--ease-system);
+}
+.boot-labels .station .fade-in {
+  opacity: 1;
+}
+
+/* Beat 3: the elbow slides in, segments wipe left→right, 40 ms apart */
+.console {
+  opacity: 0;
+  transform: translateX(-24px);
+  transition:
+    opacity var(--t-base) var(--ease-system),
+    transform var(--t-base) var(--ease-system);
+}
+.boot-console .console {
+  opacity: 1;
+  transform: none;
+}
+.frame__seg,
+.frame__hold {
+  clip-path: inset(0 100% 0 0) fill-box;
+}
+.boot-console .frame__seg,
+.boot-console .frame__hold {
+  clip-path: inset(0 0 0 0) fill-box;
+  transition: clip-path var(--t-base) var(--ease-system) calc(120ms + var(--i, 8) * 40ms);
+}
+.frame__label,
+.console__readouts {
+  opacity: 0;
+  transition: opacity var(--t-base) var(--ease-system) 0.5s;
+}
+.boot-console .frame__label,
+.boot-console .console__readouts {
+  opacity: 1;
+}
+
+/* Affordance: label + arrow + caption arrive at the end of the boot */
+.station .afford,
+.station .arrow,
+.caption {
+  opacity: 0;
+  transition: opacity var(--t-base) var(--ease-system);
+}
+.boot-affordance .station .afford,
+.boot-affordance .station .arrow,
+.boot-affordance .caption {
+  opacity: 1;
+}
+/* The label retires after the first input; the arrow stays as live feedback without the pulse */
+.has-touched .station .afford,
+.has-touched .caption::before {
+  opacity: 0;
+}
+.has-touched .caption::before {
+  transition: opacity var(--t-base) var(--ease-system);
+}
+.boot-affordance:not(.has-touched) .station .arrow {
+  animation: standby-pulse 1.6s var(--ease-signal) infinite;
+}
+.is-autopilot .station .afford {
+  opacity: 0.35;
+}
+
+/* STANDBY pulse (§8.4): the status word and one segment breathe */
+.is-standby .readout--status .readout__value,
+.is-standby .frame__seg--pulse {
+  animation: standby-pulse 1.6s var(--ease-signal) infinite;
+}
+@keyframes standby-pulse {
+  50% {
+    opacity: 0.45;
+  }
+}
+
+/* Bezel feedback */
+.station .bezel .is-hover {
+  stroke: var(--line-hi);
+}
+.station .bezel .is-aligned {
+  stroke: var(--w-cream);
+  filter: drop-shadow(0 0 4px var(--w-cream));
+}
+
+/* Handoff (beat 7): headline, subline, actions boot in with the console wipe */
+[data-state="online"] .handoff > * {
+  clip-path: inset(0 100% 0 0);
+  animation: wipe-in var(--t-base) var(--ease-system) forwards;
+}
+[data-state="online"] .handoff > :nth-child(2) {
+  animation-delay: 40ms;
+}
+[data-state="online"] .handoff > :nth-child(3) {
+  animation-delay: 80ms;
+}
+@keyframes wipe-in {
+  to {
+    clip-path: inset(0 -8px 0 0); /* -8px keeps the focus ring visible */
+  }
+}
+
+/* ---------------------------------------------------------- mission */
+
+.mission {
+  padding: 96px clamp(24px, 4vw, 64px) 0;
+  border-top: 1px solid var(--void-3);
+  outline: none;
+}
+.mission__title {
+  margin: 16px 0 0;
+  font: 700 40px/0.95 var(--font-display);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.mission__facts {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 24px;
+  margin: 48px 0 0;
+}
+.mission__facts div {
+  padding-top: 12px;
+  border-top: 1px solid var(--line-lo);
+}
+.mission__facts dt {
+  font: 500 11px/1.4 var(--font-mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--line-mid);
+}
+.mission__facts dt .code {
+  color: var(--line-hi);
+}
+.mission__facts dd {
+  margin: 8px 0 0;
+  font: 600 24px/1 var(--font-display);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--c-amber);
+}
+.footer {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 8px 24px;
+  margin-top: 96px;
+  padding: 24px 0 32px;
+  border-top: 1px solid var(--void-3);
+}
+.footer p {
+  margin: 0;
+}
+.footer p:first-child {
+  color: var(--line-hi);
+}
+
+/* ----------------------------------------------------------- mobile */
+
+@media (max-width: 767px) {
+  .hero {
+    --cy: 30svh;
+    --stage: min(86vw, 46svh);
+    min-height: max(100svh, 720px);
+  }
+  .topbar {
+    top: 16px;
+    left: 16px;
+    right: 16px;
+  }
+  .topbar .label--quiet {
+    display: none;
+  }
+  .handoff {
+    left: 20px;
+    right: 20px;
+    width: auto;
+    top: calc(var(--cy) + var(--stage) / 2 + 48px);
+  }
+  .headline {
+    font-size: 40px;
+  }
+  /* Phones: the vertical registration line stops just under the instrument, clear of the copy. */
+  .hero {
+    --v-line: calc(var(--cy) + var(--stage) / 2 + 12px);
+  }
+  /* The affordance label moves under the station (no room for a leader line). */
+  .station .afford {
+    display: none;
+  }
+  .caption {
+    top: calc(var(--cy) + var(--stage) / 2 + 20px);
+  }
+  .caption::before {
+    content: "04-11 · Drag to align";
+    color: var(--line-hi);
+  }
+  .caption span {
+    display: none;
+  }
+  [data-state="online"] .caption {
+    display: none;
+  }
+  .console {
+    left: 8px;
+    right: 8px;
+    bottom: 8px;
+    width: auto;
+    height: 136px;
+  }
+  .console__readouts {
+    left: 72px;
+    bottom: 40px;
+    gap: 20px;
+  }
+  .readout--status .readout__value {
+    font-size: 32px;
+  }
+  .readout:nth-child(2),
+  .readout:nth-child(3) {
+    display: none;
+  }
+  .mission__facts {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* ------------------------------------------------------ reduced motion */
+
+.reduce-motion *,
+.reduce-motion *::before,
+.reduce-motion *::after {
+  transition-duration: 0.01ms !important;
+  animation-duration: 0.01ms !important;
+}
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}

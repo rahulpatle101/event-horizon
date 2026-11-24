@@ -1,0 +1,289 @@
+<!doctype html>
+<html lang="en" class="is-loading" data-stage="arrival">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="color-scheme" content="dark" />
+    <meta name="theme-color" content="#08090b" />
+    <link rel="icon" href="../favicon.svg" type="image/svg+xml" />
+    <title>EVENT HORIZON — Observation deck</title>
+    <meta
+      name="description"
+      content="Aboard the fictional deep-space vessel Horizon, observe, scan, and record a black hole rendered live with vgpu and WebGPU. A fictional NASA mission concept — Day 2 of 100 Days of Digital Craft."
+    />
+    <meta property="og:title" content="EVENT HORIZON — Observation deck" />
+    <meta property="og:description" content="Observe, investigate, and record a black hole rendered live with WebGPU. A fictional mission concept." />
+    <meta property="og:image" content="../poster-desktop.jpg" />
+    <link rel="preload" as="image" href="../poster-desktop.jpg" media="(min-width: 768px)" />
+    <link rel="preload" as="image" href="../poster-mobile.jpg" media="(max-width: 767px)" />
+    <script>
+      // Apply motion preference before first paint so nothing animates when it should not.
+      if (matchMedia("(prefers-reduced-motion: reduce)").matches)
+        document.documentElement.classList.add("reduce-motion");
+    </script>
+    <script type="module" src="../src/main.ts"></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+
+    <!-- Observation window. Decorative: everything it shows is described in text. -->
+    <div class="stage" aria-hidden="true">
+      <picture class="stage__picture stage__picture--arrival">
+        <source media="(max-width: 767px)" srcset="../poster-mobile.jpg" />
+        <img class="stage__poster" src="../poster-desktop.jpg" alt="" decoding="async" fetchpriority="high" />
+      </picture>
+      <picture class="stage__picture stage__picture--observe">
+        <source media="(max-width: 767px)" srcset="../poster-observe-mobile.jpg" />
+        <img class="stage__poster" src="../poster-observe-desktop.jpg" alt="" decoding="async" loading="lazy" />
+      </picture>
+      <canvas class="stage__canvas"></canvas>
+      <div class="stage__scrim"></div>
+      <div class="reticle">
+        <span class="reticle__corner reticle__corner--tl"></span>
+        <span class="reticle__corner reticle__corner--tr"></span>
+        <span class="reticle__corner reticle__corner--bl"></span>
+        <span class="reticle__corner reticle__corner--br"></span>
+      </div>
+      <!-- Living environment: hero stars, drifting dust, passing debris, a rare relay probe -->
+      <canvas class="deck-space" data-space></canvas>
+      <!-- Illustrative scan: a wavefront expanding from the shadow centre -->
+      <svg class="wavefront" data-wavefront><circle data-wavefront-ring r="0" /></svg>
+      <div class="annotations" data-annotations-layer>
+        <svg class="annotations__lines" data-annotation-lines></svg>
+        <div class="annotation" data-annotation="shadow" data-select="shadow"><span class="annotation__num">1</span><span class="annotation__text"><strong>Shadow</strong><small>≈ 2.6 R<sub>s</sub> radius</small></span></div>
+        <div class="annotation" data-annotation="ring" data-select="ring"><span class="annotation__num">2</span><span class="annotation__text"><strong>Photon ring</strong><small>light that orbited first</small></span></div>
+        <div class="annotation" data-annotation="disk" data-select="disk"><span class="annotation__num">3</span><span class="annotation__text"><strong>Accretion disk</strong><small>3 → 9 R<sub>s</sub></small></span></div>
+      </div>
+      <!-- Observation deck: window aperture in a graphite surround; the rim catches passing light -->
+      <div class="aperture" data-aperture>
+        <div class="aperture__window" data-window></div>
+        <canvas class="aperture__rim" data-rim></canvas>
+      </div>
+      <div class="shutter" data-shutter></div>
+    </div>
+
+    <div class="chrome" data-chrome>
+      <header class="masthead">
+        <p class="wordmark" translate="no">Event Horizon</p>
+        <p class="masthead__meta">Deep‑space vessel Horizon · Observation deck</p>
+      </header>
+
+      <main id="main" class="hero" tabindex="-1">
+        <p class="eyebrow">NASA <span aria-hidden="true">/</span> Deep Space Exploration</p>
+        <h1 class="headline">
+          <span class="headline__line">We came</span>
+          <span class="headline__line">to see what </span>
+          <span class="headline__line">lies <em>beyond.</em></span>
+        </h1>
+        <p class="lede">
+          From the observation deck of the vessel Horizon, a black hole fills the window: gravity at its most
+          extreme, watched from a safe distance.
+        </p>
+        <div class="actions">
+          <button type="button" class="button button--primary" data-begin>
+            Begin observation
+            <svg class="button__icon" viewBox="0 0 20 20" aria-hidden="true"><path d="M4 10h11m-4-4 4 4-4 4" /></svg>
+          </button>
+          <button type="button" class="button button--ghost" data-open-briefing aria-haspopup="dialog">
+            Mission briefing
+          </button>
+        </div>
+      </main>
+
+      <aside class="telemetry" aria-labelledby="telemetry-title">
+        <h2 id="telemetry-title" class="telemetry__title">Illustrative geometry</h2>
+        <dl class="telemetry__list">
+          <div><dt>Standoff</dt><dd>13.5 R<sub>s</sub></dd></div>
+          <div><dt>Inclination</dt><dd>9.2°</dd></div>
+        </dl>
+      </aside>
+
+      <footer class="footer">
+        <p class="footer__credit">Fictional NASA mission concept</p>
+        <p class="footer__status" data-render-status hidden></p>
+        <div class="footer__utils">
+          <button type="button" class="link-button" data-open-log aria-haspopup="dialog" hidden>Expedition log</button>
+          <button type="button" class="link-button" data-open-credits aria-haspopup="dialog">Credits</button>
+          <button type="button" class="control" data-pause aria-pressed="false" hidden>
+            <span class="control__glyph" aria-hidden="true"></span>
+            <span data-pause-label>Pause motion</span>
+          </button>
+        </div>
+      </footer>
+    </div>
+
+    <!-- Science station: the bottom instrument surface, shown once observation begins. -->
+    <section class="console" aria-labelledby="console-title" data-console hidden>
+      <h2 id="console-title" class="sr-only">Science station</h2>
+      <div class="console__top">
+        <ol class="console__steps" aria-label="Encounter progress">
+          <li data-step="observe">Observe</li>
+          <li data-step="investigate">Investigate</li>
+          <li data-step="record">Record</li>
+        </ol>
+        <div class="console__utils">
+          <button type="button" class="control control--small" data-annotations-toggle aria-pressed="true" hidden>Annotations</button>
+          <button type="button" class="control control--small" data-pause-observe aria-pressed="false" hidden>
+            <span class="control__glyph" aria-hidden="true"></span>
+            <span data-pause-label>Pause motion</span>
+          </button>
+          <button type="button" class="control control--small" data-exit-observe>
+            Return to arrival <kbd>Esc</kbd>
+          </button>
+        </div>
+      </div>
+      <div class="console__body">
+        <div class="console__main">
+          <p class="console__status" data-console-status>Observing. Drag, or use ← → keys, to turn the view.</p>
+          <div class="findings" data-findings hidden>
+            <p class="findings__label">Illustrative scan · simulation values, not instrument data</p>
+            <ol class="findings__list" aria-label="Features found">
+              <li><button type="button" class="finding" data-finding="shadow" aria-pressed="false"><span class="findings__num" aria-hidden="true">1</span>Shadow</button></li>
+              <li><button type="button" class="finding" data-finding="ring" aria-pressed="false"><span class="findings__num" aria-hidden="true">2</span>Photon ring</button></li>
+              <li><button type="button" class="finding" data-finding="disk" aria-pressed="false"><span class="findings__num" aria-hidden="true">3</span>Accretion disk</button></li>
+            </ol>
+            <p class="findings__text" data-finding-text aria-live="polite">Three features identified. Select one to read about it.</p>
+          </div>
+        </div>
+        <div class="console__actions">
+          <button type="button" class="button button--instrument" data-scan>Scan black hole</button>
+          <button type="button" class="button button--instrument" data-record hidden>Record encounter</button>
+          <button type="button" class="button button--instrument-quiet" data-open-log aria-haspopup="dialog" hidden>Open log</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Sound: off until the visitor enables it; mute and volume stay available afterwards -->
+    <div class="sound" data-sound>
+      <button type="button" class="sound__enable" data-sound-enable>
+        <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 8v4h3l4 3V5L6 8H3z" /><path d="M13 7.5a3.5 3.5 0 0 1 0 5M15 5.5a6.5 6.5 0 0 1 0 9" /></svg>
+        <span data-sound-label>Enable sound</span>
+      </button>
+      <div class="sound__controls" data-sound-controls hidden>
+        <button type="button" class="sound__mute" data-sound-mute aria-pressed="false">
+          <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 8v4h3l4 3V5L6 8H3z" /><path class="sound__waves" d="M13 7.5a3.5 3.5 0 0 1 0 5M15 5.5a6.5 6.5 0 0 1 0 9" /><path class="sound__x" d="m13 8 4 4m0-4-4 4" /></svg>
+          <span data-sound-mute-label>Mute</span>
+        </button>
+        <label class="sound__volume">
+          <span class="sr-only">Volume</span>
+          <input type="range" min="0" max="100" step="1" value="70" data-sound-volume />
+        </label>
+      </div>
+    </div>
+
+    <!-- Encounter plate: the captured frame that flies into the log on Record -->
+    <figure class="plate" data-plate aria-hidden="true" hidden>
+      <img alt="" data-plate-img />
+      <figcaption><strong data-plate-title>Encounter 001</strong><span data-plate-time></span></figcaption>
+    </figure>
+
+    <p class="sr-only" role="status" aria-live="polite" data-announcer></p>
+
+    <dialog class="briefing" aria-labelledby="briefing-title" data-briefing data-mode="briefing">
+      <div class="briefing__inner">
+        <header class="briefing__head">
+          <p class="eyebrow">Vessel Horizon · Mission log</p>
+          <button type="button" class="briefing__close" data-close-briefing aria-label="Close panel">
+            <svg viewBox="0 0 20 20" aria-hidden="true"><path d="m5 5 10 10M15 5 5 15" /></svg>
+          </button>
+        </header>
+
+        <section class="log" aria-labelledby="log-title" tabindex="-1" data-log hidden>
+          <h2 id="log-title" class="log__title">Expedition log</h2>
+          <p class="log__persistence" data-log-persistence></p>
+          <div class="log__entries" data-log-entries></div>
+        </section>
+
+        <div class="briefing__body" data-briefing-body>
+        <h2 id="briefing-title" class="briefing__title">Watch the edge. Never cross it.</h2>
+        <p class="briefing__intro">
+          Horizon holds station far outside a black hole's event horizon. Nothing that crosses it can signal
+          back, so every observation comes from light that escaped.
+        </p>
+
+        <figure class="briefing__figure">
+          <svg class="sequence" viewBox="0 0 480 220" role="img" aria-labelledby="sequence-title sequence-desc">
+            <title id="sequence-title">Observation sequence, illustrative and not to scale</title>
+            <desc id="sequence-desc">
+              Horizon arrives on a wide capture orbit, surveys the accretion disk, then steps inward to a
+              13.5 Schwarzschild-radius orbit for the photon-ring campaign, always staying well outside the
+              innermost stable orbit and the horizon.
+            </desc>
+            <g class="sequence__orbits">
+              <circle cx="120" cy="110" r="96" class="sequence__orbit" />
+              <circle cx="120" cy="110" r="58" class="sequence__orbit sequence__orbit--target" />
+              <circle cx="120" cy="110" r="22" class="sequence__isco" />
+              <circle cx="120" cy="110" r="10" class="sequence__horizon" />
+            </g>
+            <path class="sequence__path" d="M470 26 C 380 30, 250 40, 214 104 A 96 96 0 0 1 120 206 C 84 206, 62 150, 62 110 A 58 58 0 0 1 120 52" />
+            <g class="sequence__marks">
+              <circle cx="214" cy="104" r="3.5" /><circle cx="120" cy="206" r="3.5" /><circle cx="120" cy="52" r="3.5" />
+            </g>
+            <g class="sequence__labels">
+              <text x="226" y="100">01 Capture</text>
+              <text x="132" y="210">02 Survey</text>
+              <text x="0" y="18">03 Ring campaign</text>
+              <text x="0" y="33" class="sequence__muted">13.5 R<tspan baseline-shift="sub" font-size="8">s</tspan> orbit</text>
+              <line x1="62" y1="38" x2="114" y2="50" class="sequence__leader" />
+              <text x="262" y="138" class="sequence__muted">Inner stable orbit · 3 R<tspan baseline-shift="sub" font-size="8">s</tspan></text>
+              <text x="262" y="160" class="sequence__muted">Event horizon · 1 R<tspan baseline-shift="sub" font-size="8">s</tspan></text>
+              <line x1="256" y1="134" x2="142" y2="110" class="sequence__leader" />
+              <line x1="256" y1="156" x2="130" y2="112" class="sequence__leader" />
+            </g>
+          </svg>
+          <figcaption>Observation sequence · illustrative, not to scale</figcaption>
+        </figure>
+
+        <section class="briefing__section" aria-labelledby="b-objective">
+          <h3 id="b-objective"><span class="briefing__num">01</span>Objective</h3>
+          <p>Map the shadow and the thin photon ring around it to test general relativity where gravity is strongest.</p>
+        </section>
+
+        <section class="briefing__section" aria-labelledby="b-probe">
+          <h3 id="b-probe"><span class="briefing__num">02</span>The vessel</h3>
+          <p>Horizon is a fictional deep-space science vessel with an observation deck, an optical imager, an X-ray timing array, and a laser link home. It never dives inward.</p>
+        </section>
+
+        <section class="briefing__section" aria-labelledby="b-plan">
+          <h3 id="b-plan"><span class="briefing__num">03</span>Observation plan</h3>
+          <ol class="briefing__plan">
+            <li><span>Capture</span><div>Slow capture into a wide orbit.</div></li>
+            <li><span>Survey</span><div>Image the disk and its Doppler-brightened side.</div></li>
+            <li><span>Ring campaign</span><div>Step inward to 13.5 R<sub>s</sub>; time echoes in the photon ring.</div></li>
+            <li><span>Relay</span><div>Stream observations home by laser.</div></li>
+          </ol>
+        </section>
+
+        <details class="briefing__details">
+          <summary>Illustrative geometry</summary>
+          <p>The values used by the live render, in Schwarzschild radii (R<sub>s</sub>).</p>
+          <dl class="briefing__geometry">
+            <div><dt>Standoff</dt><dd>13.5 R<sub>s</sub></dd></div>
+            <div><dt>Inclination</dt><dd>9.2°</dd></div>
+            <div><dt>Inner stable orbit</dt><dd>3.0 R<sub>s</sub></dd></div>
+            <div><dt>Disk extent</dt><dd>9.0 R<sub>s</sub></dd></div>
+            <div><dt>Shadow radius</dt><dd>≈ 2.6 R<sub>s</sub></dd></div>
+          </dl>
+        </details>
+
+        <button type="button" class="button button--ghost briefing__observe" data-briefing-begin>
+          Begin observation
+        </button>
+
+        <section class="briefing__credits" aria-labelledby="b-credits" tabindex="-1" data-credits>
+          <h3 id="b-credits">Credits</h3>
+          <p>
+            EVENT HORIZON and the vessel Horizon are a fictional mission concept, not an actual NASA mission.
+            The scan is illustrative: it explains the simulation, not real instrument data.
+          </p>
+          <p>
+            Day 2 of 100 Days of Digital Craft. Rendered live with vgpu / WebGPU, adapted from vgpu's
+            Optimized Black Hole example (MIT). Type: Instrument Serif, Inter Tight, IBM Plex Mono (OFL).
+            <a href="../licenses.txt">Full license notices</a>.
+          </p>
+        </section>
+        </div>
+      </div>
+    </dialog>
+  </body>
+</html>

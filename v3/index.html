@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en" data-state="standby">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="color-scheme" content="dark" />
+    <meta name="theme-color" content="#050608" />
+    <title>TESSALY RING · Crew rotation 26-4</title>
+    <meta
+      name="description"
+      content="Dock shuttle WREN 26-4 with Tessaly Ring to bring the station online. A fictional crew-rotation mission concept, not affiliated with NASA."
+    />
+    <link rel="icon" href="../favicon.svg" type="image/svg+xml" />
+    <script>
+      if (matchMedia("(prefers-reduced-motion: reduce)").matches)
+        document.documentElement.classList.add("reduce-motion");
+    </script>
+    <script type="module" src="./src/main.ts"></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+
+    <section class="hero" aria-labelledby="headline" data-hero>
+      <!-- VOID -->
+      <canvas class="stars" data-stars aria-hidden="true"></canvas>
+      <div class="crosshair" aria-hidden="true"><span class="crosshair__h"></span><span class="crosshair__v"></span></div>
+
+      <!-- INSTRUMENT: the docking stage. The ring area is the only drag target. -->
+      <div
+        class="stage"
+        data-stage
+        role="slider"
+        tabindex="0"
+        aria-label="Docking alignment"
+        aria-describedby="stage-help"
+        aria-valuemin="-180"
+        aria-valuemax="180"
+        aria-valuenow="47.3"
+        aria-valuetext="47.3 degrees right of port"
+      >
+        <!-- Signature layer: vgpu grid warp + nebula (or the CSS/SVG fallback), under the station lines -->
+        <div class="nebula" data-nebula aria-hidden="true"></div>
+        <canvas class="warp" data-warp aria-hidden="true"></canvas>
+        <svg class="station" data-station aria-hidden="true"></svg>
+      </div>
+      <p id="stage-help" class="sr-only">
+        Drag the ring, or use the left and right arrow keys, to line up port 04 with the crosshair. Hold it aligned
+        for one second to dock.
+      </p>
+      <p class="caption" aria-hidden="true"><span>A ring in the dark</span></p>
+
+      <header class="topbar">
+        <p class="label"><span class="code">26-4</span> · Crew rotation</p>
+        <p class="label label--quiet">NASA / Tessaly Ring</p>
+      </header>
+
+      <!-- Handoff copy: hidden until ONLINE (the h1 stays available to screen readers). -->
+      <main id="main" class="handoff" tabindex="-1" data-handoff>
+        <h1 id="headline" class="headline" data-headline>Tessaly <span class="nowrap">Ring · Online</span></h1>
+        <p class="subline">Crew rotation 26-4 has docked. Six months on the ring begins now.</p>
+        <div class="actions">
+          <a class="pill pill--amber" href="#mission" data-cta>View the mission</a>
+          <button type="button" class="pill pill--periwink" data-replay>Replay docking</button>
+        </div>
+      </main>
+
+      <!-- CONSOLE: one corner only (bottom-left) -->
+      <div class="console" data-console>
+        <svg class="console__frame" data-console-frame aria-hidden="true"></svg>
+        <div class="console__readouts">
+          <div class="readout readout--status">
+            <p class="readout__code" data-status-code>26-4 · Status</p>
+            <p class="readout__value" data-status>Standby</p>
+          </div>
+          <div class="readout">
+            <p class="readout__code">218 · Range</p>
+            <p class="readout__value"><span data-range>240</span><span class="readout__unit">M</span></p>
+          </div>
+          <div class="readout">
+            <p class="readout__code">07 · Rate</p>
+            <p class="readout__value"><span data-rate>0.12</span><span class="readout__unit">M/S</span></p>
+          </div>
+          <div class="readout">
+            <p class="readout__code">04 · Offset</p>
+            <p class="readout__value"><span data-offset>47.3</span><span class="readout__unit">°</span></p>
+          </div>
+        </div>
+      </div>
+
+      <p class="sr-only" role="status" aria-live="polite" data-announcer></p>
+    </section>
+
+    <section class="mission" id="mission" aria-labelledby="mission-title" tabindex="-1">
+      <p class="label"><span class="code">26-4</span> · Mission</p>
+      <h2 id="mission-title" class="mission__title">Crew rotation 26-4</h2>
+      <dl class="mission__facts">
+        <div><dt><span class="code">01</span> · Station</dt><dd>Tessaly Ring</dd></div>
+        <div><dt><span class="code">04</span> · Berth</dt><dd>Port 04</dd></div>
+        <div><dt><span class="code">26</span> · Shuttle</dt><dd>WREN 26-4</dd></div>
+        <div><dt><span class="code">06</span> · Duration</dt><dd>6 months</dd></div>
+      </dl>
+      <footer class="footer">
+        <p>Fictional mission concept. Not affiliated with NASA.</p>
+        <p class="label--quiet">Day 002 / 100 Days of Digital Craft · V3</p>
+      </footer>
+    </section>
+  </body>
+</html>

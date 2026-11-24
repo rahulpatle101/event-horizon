@@ -1,0 +1,50 @@
+/* Tokens from ART_DIRECTION_space-station.md §4.2 (colour) and §8 (motion). Use only these. */
+:root {
+  /* VOID */
+  --void-0: #050608;
+  --void-1: #0d0f13;
+  --void-2: #171a20;
+  --void-3: #242832;
+
+  /* INSTRUMENT (lines + text on dark) */
+  --line-hi: #ece8df;
+  --line-mid: #9a9ea6;
+  --line-lo: #4a4f59;
+
+  /* CONSOLE (filled blocks only, never page background or strokes) */
+  --c-amber: #ffb23f;
+  --c-apricot: #f29a5c;
+  --c-peach: #f4c7a4;
+  --c-lilac: #a898d8;
+  --c-periwink: #8da4e6;
+  --c-rose: #d77a8c;
+  --c-alert: #e2483c;
+
+  /* WARMTH */
+  --w-cream: #f3ebd3;
+  --w-taupe: #b8ad98;
+  --w-navy: #1e3253;
+
+  /* NEBULA (2% max, one moment per screen) */
+  --n-ion: #3b7bff;
+  --n-plasma: #ff7a2f;
+  --n-teal: #5fd3b5;
+
+  /* Type */
+  --font-display: "Antonio", "Arial Narrow", sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, Menlo, monospace;
+  --font-body: "IBM Plex Sans Condensed", "Arial Narrow", sans-serif;
+
+  /* Motion */
+  --ease-system: cubic-bezier(0.2, 0, 0, 1);
+  --ease-orbit: linear;
+  --ease-signal: cubic-bezier(0.4, 0, 0.6, 1);
+  --ease-autopilot: cubic-bezier(0.65, 0, 0.35, 1); /* easeInOut, no overshoot (brief §5.1) */
+  --t-fast: 120ms;
+  --t-base: 280ms;
+  --t-slow: 640ms;
+
+  /* Layout: 8px base, 12 columns, 24px gutters */
+  --u: 8px;
+  --gutter: 24px;
+}

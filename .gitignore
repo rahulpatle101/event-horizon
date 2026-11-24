@@ -1,0 +1,6 @@
+node_modules
+dist
+scripts/.poster-*.png
+.DS_Store
+# Third-party screen recording used only as local art-direction reference (see BLACKHOLE-REFERENCE.md)
+reference-video/
