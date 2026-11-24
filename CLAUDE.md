@@ -1,8 +1,9 @@
 ## Day 002 — NASA mission hero (vgpu)
 
 ### Variants
-- V1: v1/index.html + src/ at /v1/. FROZEN. Never edit V1 files unless I ask.
-- Root index.html (/) is a variant index linking /v1/, /v2/, /v3/ (no app code).
+- V1: v1/index.html + src/, served at / (vercel.json rewrite; /v1/ redirects to /). FROZEN. Never edit V1 files unless I ask.
+- variants/index.html (/variants/) is an index linking /, /v2/, /v3/ (no app code). Routing lives in vercel.json and the
+  v1AtRoot plugin in vite.config.ts; keep them in sync.
 - V2 (ARDENT: Through the Red Window): v2/ at /v2/. The only shared edit
   allowed is the second entry in vite.config.ts.
 - V3 (DOCK: Thread the needle): v3/ at /v3/. Brief: v3/VARIANT_BRIEF.md;

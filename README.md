@@ -19,10 +19,18 @@ npm run poster    # re-render V1's fallback posters from the real shader (needs 
 
 | URL | What |
 | --- | --- |
-| `/` | Variant index |
-| `/v1/` | **V1 · EVENT HORIZON**: living observation deck (this README describes V1 in detail) |
+| `/` | **V1 · EVENT HORIZON**: living observation deck (this README describes V1 in detail) |
 | `/v2/` | **V2 · ARDENT**: Mars mission, stardust patch (in progress; brief in `docs/day-002-ardent-brief.md`) |
 | `/v3/` | **V3 · DOCK**: Tessaly Ring docking (brief in `v3/VARIANT_BRIEF.md`) |
+| `/variants/` | Index of all three |
+
+V1's source lives in `v1/index.html` + `src/`. It's served at `/` by a rewrite in `vercel.json` (production) and by the
+`v1AtRoot` plugin in `vite.config.ts` (dev and preview), and `/v1/` redirects to `/`. Keep the two in sync.
+
+### Deploying to Vercel
+
+Import the GitHub repo in Vercel and leave **Root Directory** empty (the repository root). `vercel.json` sets the framework
+(Vite), `npm ci`, `npm run build` and the `dist` output, plus the routing above. No environment variables are needed.
 
 The live renders need a WebGPU browser (recent Chrome or Edge). Without WebGPU, each variant falls back to a static
 scene and keeps working. V2 and V3 typecheck separately: `npx tsc --noEmit -p v2/tsconfig.json` and `-p v3/tsconfig.json`.
@@ -33,7 +41,8 @@ Requires Node 22.6+ (the poster script uses Node's built-in TypeScript type stri
 
 ```
 v1/index.html               V1 page: hero, encounter console, log/briefing dialog, sound controls
-index.html                  variant index (/), links to /v1/, /v2/, /v3/
+variants/index.html         index of all three variants (/variants/)
+vercel.json                 Vercel build + routing (V1 at /, /v1/ → /)
 src/main.ts                 UI state: briefing, observation mode, pause, fallback, lifecycle
 src/styles.css              art direction, layout, motion, reduced-motion
 src/blackhole/              renderer adapted from vgpu's "optimized-black-hole" example

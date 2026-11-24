@@ -44,6 +44,10 @@ Read this at the start of every session. Update it after every step.
 - `adaptive-quality` example not pulled yet. Pull it in task 6.
 
 ## Decisions log
+- 2026-11-25 — Vercel: V1 served at / (vercel.json rewrite "/" → /v1/index.html; /v1, /v1/ redirect to /), /v2/, /v3/
+  unchanged, variant index moved to /variants/ (needed: Vercel checks the filesystem before rewrites, so a root index.html
+  would shadow the rewrite). vite.config.ts v1AtRoot plugin mirrors it in dev/preview. Verified in dev and prod: all routes
+  render live with 0 errors; V1 suites at /: 24/24, 98/98, deck 17/17.
 - 2026-11-25 — URLs: V1 moved from / to /v1/ (v1/index.html, asset paths repointed ../); / is now a static variant index.
   Vite inputs: index, v1, v2, v3. Verified dev + prod: all pages load, 0 failed requests; V1 suites at /v1/: 24/24, 10/10, 98/98,
   deck 17/17, audio 14/14. reference-video/ is git-ignored (third-party recording, kept local).
